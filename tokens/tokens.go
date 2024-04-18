@@ -1,73 +1,45 @@
 // Package tokens holds all tokens to parse later
 package tokens
 
-import (
-	"log"
-	"slices"
-)
-
 const (
-	Illegal            = "ILLEGAL" // Illegal character
-	OpenParens         = "("       // OpenParens `(`
-	CloseParens        = ")"       // CloseParens `)`
-	OpenCurlyBrackets  = "{"       // OpenCurlyBrackets `{`
-	CloseCurlyBrackets = "}"       // CloseCurlyBrackets `}`
-	Colon              = ":"       // Colon `:`
-	Semicolon          = ";"       // Semicolon `;`
-	Dot                = "."       // Dot `.`
-	Comma              = ","       // Comma `,`
-	Ampersand          = "&"       // Ampersand `&`
-	At                 = "@"       // At `@`
-	Dollar             = "$"       // Dollar `$`
-	NumberSign         = "#"       // NumberSign `#`
-	Plus               = "+"       // Plus `+`
-	Minus              = "-"       // Minus `-`
-	Bang               = "!"       // Bang `!`
-	Asterisk           = "*"       // Asterisk `*`
-	EqEq               = "=="      // EqEq `==`
-	Eq                 = "="       // Eq `=`
-	Gt                 = ">"       // Gt `>`
-	Lt                 = "<"       // Lt `<`
-	DoubleSlash        = "//"      // DoubleSlash `//`
-	Slash              = "/"       // Slash `/`
-	Space              = " "       // Space ` `
-	Tab                = "\t"      // Tab `\t`
-	CR                 = "\r"      // CR carriage return
-	LF                 = "\n"      // LF new line
-	CRLF               = "\r\n"    // CRLF new line
+	Illegal             = "ILLEGAL"    // Illegal character
+	Identifier          = "IDENTIFIER" // Identifier some ident
+	OpenParens          = "("          // OpenParens `(`
+	CloseParens         = ")"          // CloseParens `)`
+	OpenCurlyBrackets   = "{"          // OpenCurlyBrackets `{`
+	CloseCurlyBrackets  = "}"          // CloseCurlyBrackets `}`
+	OpenSquareBrackets  = "["          // OpenSquareBrackets `[`
+	CloseSquareBrackets = "]"          // CloseSquareBrackets `]`
+	Colon               = ":"          // Colon `:`
+	Semicolon           = ";"          // Semicolon `;`
+	Dot                 = "."          // Dot `.`
+	Comma               = ","          // Comma `,`
+	Quote               = `'`          // Quote `'`
+	DoubleQuote         = `"`          // DoubleQuote `"`
+	Ampersand           = "&"          // Ampersand `&`
+	Pipe                = "|"          // Pipe `|`
+	At                  = "@"          // At `@`
+	Dollar              = "$"          // Dollar `$`
+	NumberSign          = "#"          // NumberSign `#`
+	Plus                = "+"          // Plus `+`
+	Minus               = "-"          // Minus `-`
+	Bang                = "!"          // Bang `!`
+	Asterisk            = "*"          // Asterisk `*`
+	DoubleEqual         = "=="         // DoubleEqual `==`
+	Equal               = "="          // Equal `=`
+	GreaterThan         = ">"          // GreaterThan `>`
+	LessThan            = "<"          // LessThan `<`
+	DoubleSlash         = "//"         // DoubleSlash `//`
+	Slash               = "/"          // Slash `/`
+	Space               = " "          // Space ` `
+	Tab                 = "\t"         // Tab `\t`
+	CR                  = "\r"         // CR carriage return
+	LF                  = "\n"         // LF new line
+	If                  = "if"         // If the `if` keyword
+	For                 = "for"        // For the `for` keyword
+	Function            = "function"   // Function the `function` keyword
+	Throw               = "throw"      // Throw the `throw` keyword
 )
-
-// TokenTypes list of all tokens
-var TokenTypes = []string{
-	Illegal,
-	OpenParens,
-	CloseParens,
-	OpenCurlyBrackets,
-	CloseCurlyBrackets,
-	Colon,
-	Semicolon,
-	Dot,
-	Comma,
-	Ampersand,
-	At,
-	Dollar,
-	NumberSign,
-	Plus,
-	Minus,
-	Bang,
-	Asterisk,
-	EqEq,
-	Eq,
-	Gt,
-	Lt,
-	DoubleSlash,
-	Slash,
-	Space,
-	Tab,
-	CR,
-	LF,
-	CRLF,
-}
 
 // Token the token struct
 type Token struct {
@@ -75,10 +47,23 @@ type Token struct {
 	Literal string
 }
 
+var keywords = map[string]string{
+	If:       If,
+	For:      For,
+	Function: Function,
+	Throw:    Throw,
+}
+
+// LookupKeyword lookup keywords and fallback to identifier
+func LookupKeyword(ident string) string {
+	if token, ok := keywords[ident]; ok {
+		return token
+	}
+
+	return Identifier
+}
+
 // New create a new token
 func New[T string | byte](tokenType string, literal T) Token {
-	if !slices.Contains(TokenTypes, tokenType) {
-		log.Fatalf("Invalid token type: %s\n", tokenType)
-	}
 	return Token{Type: tokenType, Literal: string(literal)}
 }
