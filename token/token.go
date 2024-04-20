@@ -63,6 +63,16 @@ type Token struct {
 	Literal string
 }
 
+// IsWhitespace checks if the token is a whitespace one
+func (t Token) IsWhitespace() bool {
+	return t.Type == Space || t.Type == Tab || t.Type == CR || t.Type == LF
+}
+
+// IsEOF checks if the token is the last one
+func (t Token) IsEOF() bool {
+	return t.Type == EndOfFile
+}
+
 var keywords = map[string]string{
 	If:       If,
 	Else:     Else,

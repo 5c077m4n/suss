@@ -61,12 +61,6 @@ func (l *Lexer) readString() (string, error) {
 	}
 }
 
-func (l *Lexer) skipWhitespace() {
-	for l.char == ' ' || l.char == '\t' || l.char == '\n' || l.char == '\r' {
-		l.readChar()
-	}
-}
-
 func (l *Lexer) readNumber() string {
 	position := l.position
 	for isDigit(l.char) {
@@ -85,8 +79,6 @@ func (l *Lexer) peekChar() byte {
 // NextToken get the next token
 func (l *Lexer) NextToken() token.Token {
 	var t token.Token
-
-	l.skipWhitespace()
 
 	switch c := l.char; c {
 	case '=':
@@ -109,6 +101,10 @@ func (l *Lexer) NextToken() token.Token {
 		}
 	case '/':
 		t = token.New(token.Slash, c)
+	case '%':
+		t = token.New(token.Percent, c)
+	case '#':
+		t = token.New(token.NumberSign, c)
 	case '*':
 		t = token.New(token.Asterisk, c)
 	case '<':
@@ -140,8 +136,16 @@ func (l *Lexer) NextToken() token.Token {
 		}
 
 		t = token.New(token.String, stringLiteral)
-	case 0:
-		t = token.New(token.EndOfFile, "")
+	case '\x00':
+		t = token.New(token.EndOfFile, c)
+	case ' ':
+		t = token.New(token.Space, c)
+	case '\t':
+		t = token.New(token.Tab, c)
+	case '\r':
+		t = token.New(token.CR, c)
+	case '\n':
+		t = token.New(token.LF, c)
 	default:
 		if isLetter(c) {
 			ident := l.readIdentifier()
@@ -157,14 +161,17 @@ func (l *Lexer) NextToken() token.Token {
 	return t
 }
 
-// ToChannel converts the lexer object to a token channel
+// ToChannel converts the lexer object to a (non-whitespace) token channel
 func (l *Lexer) ToChannel() <-chan token.Token {
 	ch := make(chan token.Token)
 
 	go func() {
 		defer close(ch)
-		for t := l.NextToken(); t.Type != token.EndOfFile; t = l.NextToken() {
-			ch <- t
+
+		for t := l.NextToken(); !t.IsEOF(); t = l.NextToken() {
+			if !t.IsWhitespace() {
+				ch <- t
+			}
 		}
 	}()
 
