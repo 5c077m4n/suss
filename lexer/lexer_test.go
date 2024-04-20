@@ -205,3 +205,19 @@ func TestNextHashToken(t *testing.T) {
 	}
 	runTest(t, input, tests)
 }
+
+func TestNextCSSUnitToken(t *testing.T) {
+	input := `5rem; 6em; 18px;`
+	tests := []tokenTypeLiteral{
+		{token.Integer, "5"},
+		{token.Rem, "rem"},
+		{token.Semicolon, ";"},
+		{token.Integer, "6"},
+		{token.Em, "em"},
+		{token.Semicolon, ";"},
+		{token.Integer, "18"},
+		{token.Pixel, "px"},
+		{token.Semicolon, ";"},
+	}
+	runTest(t, input, tests)
+}

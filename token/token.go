@@ -22,6 +22,7 @@ const (
 	At                  = "@"          // At `@`
 	Dollar              = "$"          // Dollar `$`
 	NumberSign          = "#"          // NumberSign `#`
+	Percent             = "%"          // Percent `%`
 	Plus                = "+"          // Plus `+`
 	Minus               = "-"          // Minus `-`
 	Bang                = "!"          // Bang `!`
@@ -49,6 +50,11 @@ const (
 	False               = "false"      // False the `false` keyword
 	Integer             = "int"        // Integer int type
 	String              = "string"     // String string type
+	Pixel               = "px"         // Pixel `px` unit
+	Em                  = "em"         // Em `em` unit
+	Rem                 = "rem"        // Rem `rem` unit
+	Vw                  = "vw"         // Vw `vw` unit
+	Vh                  = "vh"         // Vh `vh` unit
 )
 
 // Token the token struct
@@ -68,6 +74,11 @@ var keywords = map[string]string{
 	Return:   Return,
 	True:     True,
 	False:    False,
+	Pixel:    Pixel,
+	Em:       Em,
+	Rem:      Rem,
+	Vw:       Vw,
+	Vh:       Vh,
 }
 
 // LookupIdentifier lookup keywords and fallback to identifier
