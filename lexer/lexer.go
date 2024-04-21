@@ -80,81 +80,85 @@ func (l *Lexer) peekChar() byte {
 func (l *Lexer) NextToken() token.Token {
 	var t token.Token
 
-	switch c := l.char; c {
+	switch c, pos := l.char, l.position; c {
 	case '=':
 		if l.peekChar() == '=' {
 			l.readChar()
-			t = token.New(token.DoubleEqual, "==")
+			t = token.New(token.DoubleEqual, "==", pos)
 		} else {
-			t = token.New(token.Equal, c)
+			t = token.New(token.Equal, c, pos)
 		}
 	case '+':
-		t = token.New(token.Plus, c)
+		t = token.New(token.Plus, c, pos)
 	case '-':
-		t = token.New(token.Minus, c)
+		t = token.New(token.Minus, c, pos)
 	case '!':
 		if l.peekChar() == '=' {
 			l.readChar()
-			t = token.New(token.NotEqual, "!=")
+			t = token.New(token.NotEqual, "!=", pos)
 		} else {
-			t = token.New(token.Bang, c)
+			t = token.New(token.Bang, c, pos)
 		}
 	case '/':
-		t = token.New(token.Slash, c)
+		t = token.New(token.Slash, c, pos)
 	case '%':
-		t = token.New(token.Percent, c)
+		t = token.New(token.Percent, c, pos)
 	case '#':
-		t = token.New(token.NumberSign, c)
+		t = token.New(token.NumberSign, c, pos)
+	case '&':
+		t = token.New(token.Ampersand, c, pos)
 	case '*':
-		t = token.New(token.Asterisk, c)
+		t = token.New(token.Asterisk, c, pos)
 	case '<':
-		t = token.New(token.LessThan, c)
+		t = token.New(token.LessThan, c, pos)
 	case '>':
-		t = token.New(token.GreaterThan, c)
+		t = token.New(token.GreaterThan, c, pos)
 	case ';':
-		t = token.New(token.Semicolon, c)
+		t = token.New(token.Semicolon, c, pos)
 	case ':':
-		t = token.New(token.Colon, c)
+		t = token.New(token.Colon, c, pos)
 	case '(':
-		t = token.New(token.OpenParens, c)
+		t = token.New(token.OpenParens, c, pos)
 	case ')':
-		t = token.New(token.CloseParens, c)
+		t = token.New(token.CloseParens, c, pos)
+	case '.':
+		t = token.New(token.Dot, c, pos)
 	case ',':
-		t = token.New(token.Comma, c)
+		t = token.New(token.Comma, c, pos)
 	case '[':
-		t = token.New(token.OpenSquareBrackets, c)
+		t = token.New(token.OpenSquareBrackets, c, pos)
 	case ']':
-		t = token.New(token.CloseSquareBrackets, c)
+		t = token.New(token.CloseSquareBrackets, c, pos)
 	case '{':
-		t = token.New(token.OpenCurlyBrackets, c)
+		t = token.New(token.OpenCurlyBrackets, c, pos)
 	case '}':
-		t = token.New(token.CloseCurlyBrackets, c)
+		t = token.New(token.CloseCurlyBrackets, c, pos)
 	case '"':
 		stringLiteral, err := l.readString()
 		if err != nil {
 			panic(err)
 		}
 
-		t = token.New(token.String, stringLiteral)
+		t = token.New(token.String, stringLiteral, pos)
 	case '\x00':
-		t = token.New(token.EndOfFile, c)
+		t = token.New(token.EndOfFile, c, pos)
 	case ' ':
-		t = token.New(token.Space, c)
+		t = token.New(token.Space, c, pos)
 	case '\t':
-		t = token.New(token.Tab, c)
+		t = token.New(token.Tab, c, pos)
 	case '\r':
-		t = token.New(token.CR, c)
+		t = token.New(token.CR, c, pos)
 	case '\n':
-		t = token.New(token.LF, c)
+		t = token.New(token.LF, c, pos)
 	default:
 		if isLetter(c) {
 			ident := l.readIdentifier()
-			return token.New(token.LookupIdentifier(ident), ident)
+			return token.New(token.LookupIdentifier(ident), ident, pos)
 		} else if isDigit(c) {
 			n := l.readNumber()
-			return token.New(token.Integer, n)
+			return token.New(token.Integer, n, pos)
 		}
-		t = token.New(token.Illegal, c)
+		t = token.New(token.Illegal, c, pos)
 	}
 
 	l.readChar()

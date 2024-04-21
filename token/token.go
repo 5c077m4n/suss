@@ -59,8 +59,9 @@ const (
 
 // Token the token struct
 type Token struct {
-	Type    string
-	Literal string
+	Type          string
+	Literal       string
+	startPosition int
 }
 
 // IsWhitespace checks if the token is a whitespace one
@@ -71,6 +72,20 @@ func (t Token) IsWhitespace() bool {
 // IsEOF checks if the token is the last one
 func (t Token) IsEOF() bool {
 	return t.Type == EndOfFile
+}
+
+// Position get the start and end position of the token
+func (t Token) Position() (int, int) {
+	return t.startPosition, t.startPosition + len(t.Literal)
+}
+
+// New create a new token
+func New[T string | byte](tokenType string, literal T, startPosition int) Token {
+	return Token{
+		Type:          tokenType,
+		Literal:       string(literal),
+		startPosition: startPosition,
+	}
 }
 
 var keywords = map[string]string{
@@ -98,9 +113,4 @@ func LookupIdentifier(ident string) string {
 	}
 
 	return Identifier
-}
-
-// New create a new token
-func New[T string | byte](tokenType string, literal T) Token {
-	return Token{Type: tokenType, Literal: string(literal)}
 }
