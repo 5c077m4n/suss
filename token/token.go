@@ -34,6 +34,7 @@ const (
 	LessThan            = "<"          // LessThan `<`
 	DoubleSlash         = "//"         // DoubleSlash `//`
 	Slash               = "/"          // Slash `/`
+	BackSlash           = `\`          // BackSlash `\`
 	Space               = " "          // Space ` `
 	Tab                 = "\t"         // Tab `\t`
 	CR                  = "\r"         // CR carriage return

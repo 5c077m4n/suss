@@ -313,6 +313,18 @@ func TestNextStringToken(t *testing.T) {
 	runTest(t, input, tests)
 }
 
+func TestNextEscapedStringToken(t *testing.T) {
+	input := `"foo\"bar"; "foobar\"";`
+	tests := []token.Token{
+		token.New(token.String, `foo\"bar`, 0),
+		token.New(token.Semicolon, ";", 10),
+		token.New(token.Space, " ", 11),
+		token.New(token.String, `foobar\"`, 12),
+		token.New(token.Semicolon, ";", 22),
+	}
+	runTest(t, input, tests)
+}
+
 func TestNextArrayToken(t *testing.T) {
 	input := `[1, 2];`
 	tests := []token.Token{

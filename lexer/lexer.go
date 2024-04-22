@@ -3,6 +3,8 @@ package lexer
 
 import (
 	"errors"
+	"log"
+
 	"suss/token"
 )
 
@@ -53,6 +55,8 @@ func (l *Lexer) readString() (string, error) {
 	position := l.position + 1
 	for {
 		switch l.readChar() {
+		case '\\':
+			l.readChar()
 		case '"':
 			return l.input[position:l.position], nil
 		case 0:
@@ -136,7 +140,7 @@ func (l *Lexer) NextToken() token.Token {
 	case '"':
 		stringLiteral, err := l.readString()
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 
 		t = token.New(token.String, stringLiteral, pos)
