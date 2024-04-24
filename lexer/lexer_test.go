@@ -300,7 +300,7 @@ func TestNextEQToken(t *testing.T) {
 
 func TestNextStringToken(t *testing.T) {
 	input := `"foobar";
-	"foo bar";`
+	"foo bar"; 'single quote string';`
 	tests := []token.Token{
 		token.New(token.String, "foobar", 0),
 		token.New(token.Semicolon, ";", 8),
@@ -308,7 +308,10 @@ func TestNextStringToken(t *testing.T) {
 		token.New(token.Tab, "\t", 10),
 		token.New(token.String, "foo bar", 11),
 		token.New(token.Semicolon, ";", 20),
-		token.New(token.EndOfFile, "\x00", 21),
+		token.New(token.Space, " ", 21),
+		token.New(token.String, "single quote string", 22),
+		token.New(token.Semicolon, ";", 43),
+		token.New(token.EndOfFile, "\x00", 44),
 	}
 	runTest(t, input, tests)
 }
@@ -384,7 +387,7 @@ func TestChannelNextCSSSelectorToken(t *testing.T) {
 		token.New(token.Dot, ".", 0),
 		token.New(token.Identifier, "some-classname", 1),
 		token.New(token.GreaterThan, ">", 16),
-		token.New(token.NumberSign, "#", 18),
+		token.New(token.Hash, "#", 18),
 		token.New(token.Identifier, "some-id", 19),
 		token.New(token.OpenCurlyBrackets, "{", 27),
 		token.New(token.Identifier, "background-color", 30),
@@ -408,7 +411,7 @@ func TestChannelNextCSSNestedSelectorToken(t *testing.T) {
 		token.New(token.OpenCurlyBrackets, "{", 16),
 		token.New(token.Ampersand, "&", 19),
 		token.New(token.GreaterThan, ">", 21),
-		token.New(token.NumberSign, "#", 23),
+		token.New(token.Hash, "#", 23),
 		token.New(token.Identifier, "some-id", 24),
 		token.New(token.OpenCurlyBrackets, "{", 32),
 		token.New(token.Identifier, "background-color", 36),

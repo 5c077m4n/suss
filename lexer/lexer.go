@@ -4,7 +4,6 @@ package lexer
 import (
 	"errors"
 	"log"
-
 	"suss/token"
 )
 
@@ -15,6 +14,8 @@ type Lexer struct {
 	readPoisition int
 	char          byte
 }
+
+var errUnfinishedString = errors.New("unfinished string")
 
 func isLetter(char byte) bool {
 	return char >= 'a' && char <= 'z' || char >= 'A' && char <= 'Z' || char == '_' || char == '-'
@@ -51,16 +52,16 @@ func (l *Lexer) readIdentifier() string {
 	return l.input[position:l.position]
 }
 
-func (l *Lexer) readString() (string, error) {
+func (l *Lexer) readString(stringQuoteType byte) (string, error) {
 	position := l.position + 1
 	for {
 		switch l.readChar() {
 		case '\\':
 			l.readChar()
-		case '"':
+		case stringQuoteType:
 			return l.input[position:l.position], nil
 		case 0:
-			return "", errors.New("unfinished string")
+			return "", errUnfinishedString
 		}
 	}
 }
@@ -104,11 +105,16 @@ func (l *Lexer) NextToken() token.Token {
 			t = token.New(token.Bang, c, pos)
 		}
 	case '/':
-		t = token.New(token.Slash, c, pos)
+		if l.peekChar() == '/' {
+			l.readChar()
+			t = token.New(token.DoubleSlash, "//", pos)
+		} else {
+			t = token.New(token.Slash, c, pos)
+		}
 	case '%':
 		t = token.New(token.Percent, c, pos)
 	case '#':
-		t = token.New(token.NumberSign, c, pos)
+		t = token.New(token.Hash, c, pos)
 	case '&':
 		t = token.New(token.Ampersand, c, pos)
 	case '*':
@@ -137,8 +143,15 @@ func (l *Lexer) NextToken() token.Token {
 		t = token.New(token.OpenCurlyBrackets, c, pos)
 	case '}':
 		t = token.New(token.CloseCurlyBrackets, c, pos)
+	case '\'':
+		stringLiteral, err := l.readString('\'')
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		t = token.New(token.String, stringLiteral, pos)
 	case '"':
-		stringLiteral, err := l.readString()
+		stringLiteral, err := l.readString('"')
 		if err != nil {
 			log.Fatal(err)
 		}

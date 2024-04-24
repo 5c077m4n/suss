@@ -21,7 +21,7 @@ const (
 	Pipe                = "|"          // Pipe `|`
 	At                  = "@"          // At `@`
 	Dollar              = "$"          // Dollar `$`
-	NumberSign          = "#"          // NumberSign `#`
+	Hash                = "#"          // Hash `#`
 	Percent             = "%"          // Percent `%`
 	Plus                = "+"          // Plus `+`
 	Minus               = "-"          // Minus `-`
