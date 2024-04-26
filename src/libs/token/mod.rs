@@ -8,10 +8,16 @@ pub enum Token {
 	Hash,
 	/// `>`
 	GreaterThan,
+	/// `>=`
+	GreaterThanOrEqual,
 	/// `<`
 	LessThan,
+	/// `<=`
+	LessThanOrEqual,
 	/// `=`
 	Equal,
+	/// `==`
+	DoubleEqual,
 	/// `(`
 	OpenParens,
 	/// `)`
@@ -40,6 +46,10 @@ pub enum Token {
 	At,
 	/// `%`
 	Percent,
+	/// `!`
+	Bang,
+	/// `!=`
+	NotEqual,
 	/// `_`
 	Underscore,
 	/// `'`

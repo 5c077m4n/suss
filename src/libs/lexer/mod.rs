@@ -48,8 +48,55 @@ impl Lexer {
 			b'.' => Token::Dot,
 			b',' => Token::Comma,
 			b'#' => Token::Hash,
-			b'>' => Token::GreaterThan,
-			b'<' => Token::LessThan,
+			b'@' => Token::At,
+			b'&' => Token::Ampersand,
+			b'*' => Token::Asterisk,
+			b':' => Token::Colon,
+			b';' => Token::Semicolon,
+			b'=' => {
+				if self.peek_char().is_some_and(|c| c == b'=') {
+					self.read_char();
+					Token::DoubleEqual
+				} else {
+					Token::Equal
+				}
+			}
+			b'!' => {
+				if self.peek_char().is_some_and(|c| c == b'=') {
+					self.read_char();
+					Token::NotEqual
+				} else {
+					Token::Bang
+				}
+			}
+			b'>' => {
+				if self.peek_char().is_some_and(|c| c == b'=') {
+					self.read_char();
+					Token::GreaterThanOrEqual
+				} else {
+					Token::GreaterThan
+				}
+			}
+			b'<' => {
+				if self.peek_char().is_some_and(|c| c == b'=') {
+					self.read_char();
+					Token::LessThanOrEqual
+				} else {
+					Token::LessThan
+				}
+			}
+			b'(' => Token::OpenParens,
+			b')' => Token::CloseParens,
+			b'{' => Token::OpenCurlyBrackets,
+			b'}' => Token::CloseCurlyBrackets,
+			b'/' => {
+				if self.peek_char().is_some_and(|c| c == b'/') {
+					self.read_char();
+					Token::DoubleSlash
+				} else {
+					Token::Slash
+				}
+			}
 			0 => Token::EndOfFile,
 			other => Token::Illegal(other.to_string()),
 		};
