@@ -7,13 +7,22 @@ pub struct Lexer {
 	c: Option<u8>,
 }
 impl Lexer {
+	fn read_char(&mut self) {
+		self.c = self.input.get(self.read_position).copied();
+		self.position = self.read_position;
+		self.read_position += 1;
+	}
+
 	fn new(input: &'static [u8]) -> Self {
-		Self {
+		let mut s = Self {
 			input,
 			position: 0,
 			read_position: 0,
 			c: None,
-		}
+		};
+		s.read_char(); // To fill up the first char into the `c` field
+
+		s
 	}
 
 	fn is_c_letter(&self) -> bool {
@@ -23,11 +32,6 @@ impl Lexer {
 	}
 	fn is_c_digit(&self) -> bool {
 		self.c.is_some_and(|c| c.is_ascii_digit())
-	}
-	fn read_char(&mut self) {
-		self.c = self.input.get(self.read_position).copied();
-		self.position = self.read_position;
-		self.read_position += 1;
 	}
 	fn peek_char(&self) -> Option<u8> {
 		self.input.get(self.read_position).copied()
