@@ -48,7 +48,7 @@ impl Lexer {
 	}
 
 	fn next_token(&mut self) -> Token {
-		let token = match self.c.unwrap_or(0) {
+		let token = match self.c.unwrap_or(b'\0') {
 			b'.' => Token::Dot,
 			b',' => Token::Comma,
 			b'#' => Token::Hash,
@@ -101,12 +101,35 @@ impl Lexer {
 					Token::Slash
 				}
 			}
-			0 => Token::EndOfFile,
+			b' ' => Token::Space,
+			b'\t' => Token::Tab,
+			b'\r' => Token::CarriageReturn,
+			b'\n' => Token::NewLine,
+			b'\0' => Token::EndOfFile,
 			other => Token::Illegal(other.to_string()),
 		};
 		self.read_char();
 
 		token
+	}
+}
+
+impl Iterator for Lexer {
+	type Item = Token;
+
+	fn next(&mut self) -> Option<Self::Item> {
+		let mut token = self.next_token();
+		while matches!(
+			token,
+			Token::Space | Token::Tab | Token::CarriageReturn | Token::NewLine
+		) {
+			token = self.next_token();
+		}
+
+		match token {
+			Token::EndOfFile => None,
+			other => Some(other),
+		}
 	}
 }
 
