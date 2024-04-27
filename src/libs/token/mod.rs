@@ -77,3 +77,24 @@ pub enum Token {
 	Identifier(String),
 	Illegal(String),
 }
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct TokenData {
+	pub token: Token,
+	pub position: usize,
+}
+impl TokenData {
+	pub fn new(token: Token, position: usize) -> Self {
+		Self { token, position }
+	}
+
+	pub fn is_whitespace(&self) -> bool {
+		matches!(
+			self.token,
+			Token::Space | Token::Tab | Token::CarriageReturn | Token::NewLine
+		)
+	}
+	pub fn is_eof(&self) -> bool {
+		self.token == Token::EndOfFile
+	}
+}

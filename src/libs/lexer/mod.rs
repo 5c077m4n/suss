@@ -1,4 +1,4 @@
-use super::token::Token;
+use super::token::{Token, TokenData};
 
 pub struct Lexer {
 	input: &'static [u8],
@@ -47,7 +47,7 @@ impl Lexer {
 		self.input[pos..self.position].to_owned()
 	}
 
-	fn next_token(&mut self) -> Token {
+	fn next_token(&mut self) -> TokenData {
 		let token = match self.c.unwrap_or(b'\0') {
 			b'.' => Token::Dot,
 			b',' => Token::Comma,
@@ -110,25 +110,23 @@ impl Lexer {
 		};
 		self.read_char();
 
-		token
+		TokenData::new(token, self.position)
 	}
 }
 
 impl Iterator for Lexer {
-	type Item = Token;
+	type Item = TokenData;
 
 	fn next(&mut self) -> Option<Self::Item> {
-		let mut token = self.next_token();
-		while matches!(
-			token,
-			Token::Space | Token::Tab | Token::CarriageReturn | Token::NewLine
-		) {
-			token = self.next_token();
+		let mut token_data = self.next_token();
+		while !token_data.is_whitespace() {
+			token_data = self.next_token();
 		}
 
-		match token {
-			Token::EndOfFile => None,
-			other => Some(other),
+		if !token_data.is_eof() {
+			Some(token_data)
+		} else {
+			None
 		}
 	}
 }
